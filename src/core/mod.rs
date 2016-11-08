@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 use time;
 
+
 // General
 pub mod types;
 
@@ -12,6 +13,9 @@ pub mod utils;
 pub mod vars;
 pub mod link;
 pub mod locs;
+
+// serialization
+include!(concat!(env!("OUT_DIR"), "/serde_types.rs"));
 
 #[cfg(test)]
 mod tests;

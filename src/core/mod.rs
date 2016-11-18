@@ -16,6 +16,7 @@ pub mod locs;
 
 // serialization
 include!(concat!(env!("OUT_DIR"), "/serde_types.rs"));
+pub mod serialize;
 
 #[cfg(test)]
 mod tests;

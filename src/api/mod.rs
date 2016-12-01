@@ -126,19 +126,22 @@ pub fn unpack_app(dir: &path::Path, addr: &str, artifacts: Option<&Vec<ArtifactD
     // the elm app uses a certain address by default, replace it
     //app_js.write_all(text.replace("http://localhost:3733", addr).as_bytes()).unwrap();
     
-    let data = match artifacts {
+    let mut artifacts_file = fs::File::create(dir.join("artifacts.json"))
+        .expect("could not create artifacts.json");
+    match artifacts {
         Some(a) => {
-            let value = serde_json::to_value(artifacts);
-            //let json = serde_json::to_string_pretty(&value).unwrap();
-            format!("JSON.parse('{}')", value)
+            let value = serde_json::to_value(a);
+            let json = serde_json::to_string_pretty(&value).unwrap();
+            artifacts_file.write_all(json.as_bytes()).unwrap();
         },
-        None => "[]".to_string(),
+        None => artifacts_file.write_all("[]".as_bytes()).unwrap(),
     };
+    artifacts_file.flush().unwrap();
     let text = text
-        .replace("localhost:3733", addr)
-        .replace("[/*ARTIFACTS*/]", &data);
+        .replace("localhost:3733", addr);
     app_js.write_all(text.as_bytes()).unwrap();
     app_js.flush().unwrap();
+
 }
 
 pub fn start_api(artifacts: Vec<ArtifactData>, addr: &str) {

@@ -29,7 +29,8 @@ build-web:
 check-all: clippy test check
 	echo "checked all"
 
-update-html:
+update-html: build-web
+	rm -rf docs
 	cargo run --features web -- export html docs
 
 git-verify:

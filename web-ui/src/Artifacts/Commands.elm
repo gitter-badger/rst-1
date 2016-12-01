@@ -43,7 +43,6 @@ newArtifactsMsg result =
       Just newArtifacts -> 
         ArtifactsMsg (NewArtifacts newArtifacts)
 
-      -- TODO: break this out to a function
       Nothing -> case response.error of
         Just error ->
           AppError (formatJsonRpcError error)

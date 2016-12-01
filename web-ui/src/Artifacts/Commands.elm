@@ -31,7 +31,7 @@ fetchAll model =
       , withCredentials = False
       }
   in
-    if (String.length model.addr) == 0 then
+    if model.addr == "http://" then
       Cmd.none
     else
       Http.send newArtifactsMsg request

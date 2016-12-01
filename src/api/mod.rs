@@ -127,11 +127,17 @@ pub fn unpack_app(dir: &path::Path, addr: &str, artifacts: Option<&Vec<ArtifactD
     //app_js.write_all(text.replace("http://localhost:3733", addr).as_bytes()).unwrap();
     
     let data = match artifacts {
-        Some(a) => format!("JSON.parse('{}')", serde_json::to_value(artifacts)),
+        Some(a) => {
+            let value = serde_json::to_value(artifacts);
+            //let json = serde_json::to_string_pretty(&value).unwrap();
+            format!("JSON.parse('{}')", value)
+        },
         None => "[]".to_string(),
     };
-    panic!("data = {}", data);
-    app_js.write_all(text.replace("localhost:3733", addr).as_bytes()).unwrap();
+    let text = text
+        .replace("localhost:3733", addr)
+        .replace("[/*ARTIFACTS*/]", &data);
+    app_js.write_all(text.as_bytes()).unwrap();
     app_js.flush().unwrap();
 }
 

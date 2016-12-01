@@ -42,6 +42,7 @@ mod init;
 mod tutorial;
 mod data;  // data mostly for the tutorial
 mod server;
+mod export;
 
 #[cfg(test)]
 mod tests;
@@ -146,6 +147,10 @@ pub fn cmd<W, I, T>(w: &mut W, args: I) -> i32
     } else if let Some(mat) = matches.subcommand_matches("server") {
         let addr = server::get_cmd(mat);
         server::run_server(&artifacts, &addr);
+        0
+    } else if let Some(mat) = matches.subcommand_matches("export") {
+        let config = export::get_cmd(mat).expect("invalid args");
+        export::run_cmd(&artifacts, config).unwrap();
         0
     } else {
         write!(w, "{} {}: use -h to show help",

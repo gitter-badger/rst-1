@@ -5,6 +5,8 @@ use std::io::{Read, Write, Seek, SeekFrom};
 use std::str;
 use std::sync::Mutex;
 
+use serde_json;
+
 //extern crate rustc_serialize;
 //#[macro_use] extern crate nickel;
 //#[macro_use] extern crate lazy_static;
@@ -103,7 +105,10 @@ fn handle_artifacts<'a> (req: &mut Request, mut res: Response<'a>)
     }
 }
 
-fn unpack_app(dir: &path::Path, addr: &str) {
+/// unpack the web app into the front end
+/// you have the option of also unpacking the artifacts to create a static
+/// file.
+pub fn unpack_app(dir: &path::Path, addr: &str, artifacts: Option<&Vec<ArtifactData>>) {
     info!("unpacking web-ui at: {}", dir.display());
     let mut archive = Archive::new(WEB_FRONTEND_TAR);
     archive.unpack(&dir).expect("unable to unpack web frontend");
@@ -120,6 +125,12 @@ fn unpack_app(dir: &path::Path, addr: &str) {
     app_js.set_len(0).unwrap(); // delete what is there
     // the elm app uses a certain address by default, replace it
     //app_js.write_all(text.replace("http://localhost:3733", addr).as_bytes()).unwrap();
+    
+    let data = match artifacts {
+        Some(a) => format!("JSON.parse('{}')", serde_json::to_value(artifacts)),
+        None => "[]".to_string(),
+    };
+    panic!("data = {}", data);
     app_js.write_all(text.replace("localhost:3733", addr).as_bytes()).unwrap();
     app_js.flush().unwrap();
 }
@@ -138,7 +149,7 @@ pub fn start_api(artifacts: Vec<ArtifactData>, addr: &str) {
         .expect("unable to create temporary directory");
     let app_dir = tmp_dir.path();
     debug!("unpacking webapp in {}", app_dir.display());
-    unpack_app(app_dir, addr);
+    unpack_app(app_dir, addr, None);
 
     let endpoint = "/json-rpc";
     let mut server = Nickel::new();

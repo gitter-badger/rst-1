@@ -31,7 +31,10 @@ fetchAll model =
       , withCredentials = False
       }
   in
-    Http.send newArtifactsMsg request
+    if (String.length model.addr) == 0 then
+      Cmd.none
+    else
+      Http.send newArtifactsMsg request
 
 newArtifactsMsg : (Result Http.Error (ArtifactsResponse)) -> AppMsg
 newArtifactsMsg result =

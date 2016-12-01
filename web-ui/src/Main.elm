@@ -8,15 +8,20 @@ import View exposing (view)
 import Update exposing (update)
 import Routing
 import Artifacts.Commands exposing (fetchAll)
+import Artifacts.Models exposing (Artifact)
 
 type alias Flags =
   { addr: String
+  , artifacts: List Artifact
   }
 
 init : Flags -> Navigation.Location -> (Model, Cmd AppMsg)
 init flags location =
     let
-      model = initialModel flags.addr <| Routing.router location
+      model = initialModel 
+        flags.addr 
+        (Routing.router location) 
+        flags.artifacts
     in
       ( model, fetchAll model )
 

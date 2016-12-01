@@ -29,6 +29,9 @@ build-web:
 check-all: clippy test check
 	echo "checked all"
 
+update-html:
+	cargo run --features web -- export html docs
+
 git-verify:
 	git branch | grep '* master'
 	git diff --no-ext-diff --quiet --exit-code

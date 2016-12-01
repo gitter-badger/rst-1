@@ -19,9 +19,9 @@ type alias Errors =
   { descs: List String
   }
 
-initialModel : String -> Route -> Model
-initialModel addr route =
-  { artifacts = []
+initialModel : String -> Route -> List Artifact -> Model
+initialModel addr route artifacts =
+  { artifacts = artifacts
   , route = route
   , errors = initialErrors
   , settings = initialSettings
